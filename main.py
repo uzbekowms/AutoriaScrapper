@@ -1,10 +1,10 @@
 import ast
+import json
 import time
 import requests
 from bs4 import BeautifulSoup, Tag
 from typing import Optional
-
-from repository import CarRepository, GroupRepository
+from car import Car
 from service import CarService
 
 from tag_classes import BIDFAX_CONTAINER, BIDFAX_LINK, PHOTO_CLASS, PHOTOS_BLOCK, CAR_INFO_CONTAINER, CAR_ATTRIBUTES, \
@@ -37,7 +37,7 @@ def get_bidfax_link(page: BeautifulSoup) -> Optional[str]:
     return bidfax_link['href']
 
 
-def get_car_images(page: BeautifulSoup) -> Optional[list]:
+def get_car_images(page: BeautifulSoup) -> Optional[list[str]]:
     image_tags = page.find('div', id=PHOTOS_BLOCK).find_all('div', class_=PHOTO_CLASS)
     images = []
     for index, image_tag in enumerate(image_tags):
@@ -61,40 +61,32 @@ def get_bidfax_images(link: str) -> list:
     return [image['src'] for image in images]
 
 
-def parse_car_card(car_card: Tag) -> dict:
+def parse_car_card(car_card: Tag) -> Car:
     car_info = car_card.find_next('div', class_=CAR_INFO_CONTAINER)
 
-    car_id = car_info[CAR_ID]
-    name = ' '.join([car_info[attr] for attr in CAR_ATTRIBUTES if car_info[attr]])
-    price = float(car_card.find('div', class_=PRICE_CLASS)[PRICE_ATTR])
-    city = car_card.find('li', class_=CITY_CLASS).text.split()[0]
-    mileage = car_card.find('li', class_=MILEAGE_CLASS).text.strip()
-    autoria_link = f'{BASE_LINK}{car_info[AUTORIA_LINK_ATTR]}'
+    car = Car()
 
-    car_page = get_page(autoria_link)
+    car.autoria_id = car_info[CAR_ID]
+    car.name = ' '.join([car_info[attr] for attr in CAR_ATTRIBUTES if car_info[attr]])
+    car.price = float(car_card.find('div', class_=PRICE_CLASS)[PRICE_ATTR])
+    car.city = car_card.find('li', class_=CITY_CLASS).text.split()[0]
+    car.mileage = car_card.find('li', class_=MILEAGE_CLASS).text.strip()
+    car.autoria_link = f'{BASE_LINK}{car_info[AUTORIA_LINK_ATTR]}'
 
-    images = get_car_images(car_page)
-    bidfax_link = get_bidfax_link(car_page)
+    car_page = get_page(car.autoria_link)
 
-    return {'autoria_id': car_id,
-            'name': name,
-            'price': price,
-            'city': city,
-            'mileage': mileage,
-            'autoria_link': autoria_link,
-            'images': images,
-            'bidfax': {
-                'link': bidfax_link,
-                'images': None
-            }}
+    car.images = get_car_images(car_page)
+    car.bidfax_link = get_bidfax_link(car_page)
+
+    return car
 
 
-def collect_cars_from_page(page: BeautifulSoup) -> Optional[list]:
+def collect_cars_from_page(page: BeautifulSoup) -> Optional[set[Car]]:
     car_cards = page.find_all('section', class_=CAR_CARD_CLASS)
     if not car_cards:
         return
 
-    cars = [parse_car_card(car_card) for car_card in car_cards]
+    cars = {parse_car_card(car_card) for car_card in car_cards}
     return cars
 
 
@@ -111,8 +103,8 @@ def get_next_page(page_num: int) -> Optional[BeautifulSoup]:
     return get_page(SEARCH_LINK_PATTERN.format(base=BASE_LINK, announcements=ANNOUNCEMENT_PER_PAGE, page=page_num))
 
 
-def collect_cars():
-    cars = []
+def collect_cars() -> set[Car]:
+    cars = set()
     page_num = 0
     while True:
         new_cars = collect_cars_from_page(get_next_page(page_num))
@@ -120,10 +112,10 @@ def collect_cars():
         if not new_cars:
             break
 
-        cars.extend(new_cars)
+        cars.update(new_cars)
         page_num += 1
 
-    print('\n'.join([str(index + 1) + '. ' + str(car) for index, car in enumerate(cars)]))
+    return cars
 
 
 def main():
@@ -144,10 +136,14 @@ def main():
 # 100 per page - 117s
 
 if __name__ == '__main__':
+    cars = collect_cars()
+    with open('test.txt', 'w', encoding='utf-8') as file:
+        cars_list = [car.to_dict() for car in cars]
+        json.dump(cars_list, file, indent=2)
+
+    car_service.process_cars(cars)
 
     with open('test.txt', encoding='utf-8') as file:
         cars = [ast.literal_eval(car) for car in file.readlines()]
         print('\n'.join([str(index + 1) + '. ' + str(car) for index, car in enumerate(cars)]))
         print('=' * 50)
-        car_service.process_cars(cars)
-

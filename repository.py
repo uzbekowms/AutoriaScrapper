@@ -1,4 +1,6 @@
 import sqlite3
+
+from car import Car
 from singleton import Singleton
 
 
@@ -61,12 +63,12 @@ class CarRepository(Repository):
 
     def save_all(self, cars: list):
         self._cursor.executemany('INSERT INTO cars(autoria_id, price) VALUES(?, ?)',
-                                 tuple(map(lambda car: [car['autoria_id'], car['price']], cars)))
+                                 tuple(map(lambda car: [car.autoria_id, car.price], cars)))
         self._connection.commit()
 
-    def get_cars_by_ids(self, cars_id: list):
+    def get_all_car_ids(self):
         self._cursor.execute('''
-            SELECT * FROM cars WHERE autoria_id = ?
+            SELECT autoria_id FROM cars
         ''')
 
         return self._cursor.fetchall()
@@ -78,7 +80,7 @@ class CarRepository(Repository):
         return not not self._cursor.fetchone()
 
     # 📈📉
-    def get_changed_price(self, car: dict) -> bool:
+    def get_changed_price(self, car: Car) -> bool:
         if not car:
             raise ValueError('Car cannot be None')
 
@@ -89,6 +91,6 @@ class CarRepository(Repository):
                 cars c
             WHERE
                 autoria_id = ? AND price != ? 
-        ''', (car['autoria_id'], car['price']))
+        ''', (car.autoria_id, car.price))
 
         return self._cursor.fetchone()[1]

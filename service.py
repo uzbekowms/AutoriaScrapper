@@ -1,5 +1,6 @@
 from line_profiler import LineProfiler
 
+from car import Car
 from repository import GroupRepository, CarRepository
 from singleton import Singleton
 
@@ -7,7 +8,7 @@ from singleton import Singleton
 class CarService(metaclass=Singleton):
     _car_repository = CarRepository()
 
-    def process_cars(self, cars: list):
+    def process_cars(self, cars: set[Car]):
         cars = set(cars)
         # Find unique cars
         new_cars = self._get_new_cars(cars)
@@ -16,13 +17,14 @@ class CarService(metaclass=Singleton):
         # Find cars that price has been changed
         price_changed_cars = self._get_price_changed_cars(cars)
 
-
-
     def _get_new_cars(self, cars: set) -> set:
-
+        car_ids = self._car_repository.get_all_car_ids()
+        new_cars = {car for car in cars if car.autoria_id not in car_ids}
+        print(type(new_cars))
+        return new_cars
 
     def _get_price_changed_cars(self, cars: set) -> set:
-        pass
+        price_changed_cars = set()
 
 
 class GroupService(metaclass=Singleton):

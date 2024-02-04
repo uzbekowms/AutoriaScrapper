@@ -21,4 +21,3 @@ CAR_ATTRIBUTES = (
 
 
 
-time.sleep(-50)
