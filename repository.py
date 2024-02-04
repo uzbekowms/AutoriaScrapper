@@ -94,3 +94,14 @@ class CarRepository(Repository):
         ''', (car.autoria_id, car.price))
 
         return self._cursor.fetchone()[1]
+
+    def has_been_price_changed(self, autoria_id, price):
+        self._cursor.execute('''
+        SELECT 
+            price
+        FROM 
+            cars
+        WHERE 
+            autoria_id = ? AND price != ?
+        ''', (autoria_id, price))
+        return

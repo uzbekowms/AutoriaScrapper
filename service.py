@@ -26,6 +26,12 @@ class CarService(metaclass=Singleton):
     def _get_price_changed_cars(self, cars: set) -> set:
         price_changed_cars = set()
 
+    def exists_by_autoria_id(self, autoria_id):
+        return self._car_repository.exists_by_id(autoria_id)
+
+    def has_been_price_changed(self, autoria_id, price):
+        return self._car_repository.has_been_price_changed(autoria_id, price)
+
 
 class GroupService(metaclass=Singleton):
     _group_repository = GroupRepository()
