@@ -50,8 +50,6 @@ class AutoriaScrapper:
         return cars
 
     def __get_next_page(self, page_num: int) -> Optional[BeautifulSoup]:
-        print(self.SEARCH_LINK_PATTERN.format(base=self.BASE_LINK, announcements=self.ANNOUNCEMENT_PER_PAGE,
-                                              page=page_num))
         return self.__get_page(
             self.SEARCH_LINK_PATTERN.format(base=self.BASE_LINK, announcements=self.ANNOUNCEMENT_PER_PAGE,
                                             page=page_num))
@@ -77,7 +75,6 @@ class AutoriaScrapper:
         car.old_price = self.__car_service.get_price_difference(car.autoria_id, car.new_price)
 
         if car.old_price - car.new_price != 0:
-            print(car.new_price)
             self.__parse_car_info(car, car_info, car_card)
             car.status = CarStatus.price_changed
             return car

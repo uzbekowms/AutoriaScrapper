@@ -43,6 +43,5 @@ class CarService(metaclass=Singleton):
         chat_ids = self._group_service.get_all_group_ids()
         for car_message in cars_messages:
             for chat_id in chat_ids:
-                print(car_message[0].caption)
                 self.send_car_with_retry(chat_id, car_message)
                 time.sleep(1)

@@ -35,4 +35,3 @@ def unsubscribe(message: Message):
 
 bot_thread = threading.Thread(target=bot.infinity_polling, name='TgBot')
 bot_thread.start()
-print('Hello')

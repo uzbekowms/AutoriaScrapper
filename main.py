@@ -24,12 +24,12 @@ def main():
     try:
         cars = autoria_parser.collect_unique_cars()
         print('Parsed')
-        print(cars)
-        # car_service.save_all(cars)
+        car_service.save_all(cars)
+
         car_service.send_out_cars(cars)
         print('Sended')
     except Exception as e:
-        print(e.__traceback__)
+        print(e)
 
     i += 1
 

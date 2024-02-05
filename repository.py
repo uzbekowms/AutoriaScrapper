@@ -1,6 +1,5 @@
 import sqlite3
 
-from car import Car
 from singleton import Singleton
 
 
