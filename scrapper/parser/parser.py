@@ -73,7 +73,6 @@ class AutoriaScrapper:
             return car
 
         car.old_price = self.__car_service.get_price_by_id(car.autoria_id)
-        print(car.old_price)
         if car.old_price - car.new_price != 0:
             car.status = CarStatus.price_changed
             self.__parse_car_info(car, car_info, car_card)
