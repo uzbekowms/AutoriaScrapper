@@ -3,8 +3,8 @@ from typing import Optional
 import requests
 from bs4 import BeautifulSoup, Tag
 
-from car import Car
-from service import CarService
+from car import Car, CarStatus
+from car_service import CarService
 from tag_classes import CAR_CARD_CLASS, CAR_INFO_CONTAINER, CAR_ID, PRICE_CLASS, PRICE_ATTR, CAR_ATTRIBUTES, CITY_CLASS, \
     MILEAGE_CLASS, AUTORIA_LINK_ATTR, BIDFAX_PHOTO_CONTAINER, BIDFAX_PHOTO, PHOTOS_BLOCK, PHOTO_CLASS, BIDFAX_CONTAINER, \
     BIDFAX_LINK
@@ -13,7 +13,6 @@ from tag_classes import CAR_CARD_CLASS, CAR_INFO_CONTAINER, CAR_ID, PRICE_CLASS,
 class AutoriaScrapper:
     __car_service = CarService()
 
-    SCRAP_DELAY = 600  # 10 minutes
     BASE_LINK = 'https://auto.ria.com/uk'
     ANNOUNCEMENT_PER_PAGE = 100
     PHOTOS_COUNT = 5
@@ -22,7 +21,7 @@ class AutoriaScrapper:
         'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36'
     }
 
-    def collect_cars(self) -> set[Car]:
+    def collect_unique_cars(self) -> set[Car]:
         cars = set()
         page_num = 0
         while True:
@@ -41,7 +40,13 @@ class AutoriaScrapper:
         if not car_cards:
             return
 
-        cars = {self.__process_car_card(car_card) for car_card in car_cards}
+        cars = set()
+
+        for car_card in car_cards:
+            car = self.__process_car_card(car_card)
+            if car:
+                cars.add(car)
+
         return cars
 
     def __get_next_page(self, page_num: int) -> Optional[BeautifulSoup]:
@@ -60,20 +65,24 @@ class AutoriaScrapper:
 
     def __process_car_card(self, car_card: Tag) -> Car | None:
         car_info = car_card.find_next('div', class_=CAR_INFO_CONTAINER)
-
         car = Car()
-
         car.autoria_id = car_info[CAR_ID]
+        car.new_price = float(car_card.find('div', class_=PRICE_CLASS)[PRICE_ATTR])
 
         if not self.__car_service.exists_by_autoria_id(car.autoria_id):
-            return
+            self.__parse_car_info(car, car_info, car_card)
+            car.status = CarStatus.new
+            return car
 
-        car.price = float(car_card.find('div', class_=PRICE_CLASS)[PRICE_ATTR])
+        car.old_price = self.__car_service.get_price_difference(car.autoria_id, car.new_price)
 
-        if not self.__car_service.has_been_price_changed(car.autoria_id, car.price):
-            return
+        if car.old_price - car.new_price != 0:
+            print(car.new_price)
+            self.__parse_car_info(car, car_info, car_card)
+            car.status = CarStatus.price_changed
+            return car
 
-
+    def __parse_car_info(self, car, car_info, car_card):
         car.name = ' '.join([car_info[attr] for attr in CAR_ATTRIBUTES if car_info[attr]])
         car.city = car_card.find('li', class_=CITY_CLASS).text.split()[0]
         car.mileage = car_card.find('li', class_=MILEAGE_CLASS).text.strip()
@@ -83,11 +92,6 @@ class AutoriaScrapper:
 
         car.images = self.__get_car_images(car_page)
         car.bidfax_link = self.__get_bidfax_link(car_page)
-
-        return car
-
-    def __parse_car_info(self, car_card):
-        pass
 
     def __get_car_images(self, page: BeautifulSoup) -> Optional[list[str]]:
         image_tags = page.find('div', id=PHOTOS_BLOCK).find_all('div', class_=PHOTO_CLASS)

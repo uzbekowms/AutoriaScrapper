@@ -1,5 +1,3 @@
-import time
-
 BIDFAX_CONTAINER = 'vin-history'
 BIDFAX_LINK = 'unlink size16'
 BIDFAX_PHOTO_CONTAINER = 'fotorama__stage__shaft'

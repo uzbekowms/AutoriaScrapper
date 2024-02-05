@@ -48,6 +48,13 @@ class GroupRepository(Repository):
         ''')
         return self._cursor.fetchall()
 
+    def get_all_ids(self):
+        self._cursor.execute('''
+            SELECT chat_id
+            FROM subscribers
+        ''')
+        return self._cursor.fetchall()
+
 
 class CarRepository(Repository):
 
@@ -63,45 +70,22 @@ class CarRepository(Repository):
 
     def save_all(self, cars: list):
         self._cursor.executemany('INSERT INTO cars(autoria_id, price) VALUES(?, ?)',
-                                 tuple(map(lambda car: [car.autoria_id, car.price], cars)))
+                                 tuple(map(lambda car: [car.autoria_id, car.new_price], cars)))
         self._connection.commit()
 
-    def get_all_car_ids(self):
-        self._cursor.execute('''
-            SELECT autoria_id FROM cars
-        ''')
-
-        return self._cursor.fetchall()
-
-    def exists_by_id(self, id: int) -> bool:
+    def exists_by_id(self, id: str) -> bool:
         self._cursor.execute('''
             SELECT EXISTS (SELECT id FROM cars WHERE id = ?)
         ''', (id,))
-        return not not self._cursor.fetchone()
+        return not not self._cursor.fetchone()[0]
 
-    # 📈📉
-    def get_changed_price(self, car: Car) -> bool:
-        if not car:
-            raise ValueError('Car cannot be None')
-
-        self._cursor.execute('''
-            SELECT
-                autoria_id 
-            FROM
-                cars c
-            WHERE
-                autoria_id = ? AND price != ? 
-        ''', (car.autoria_id, car.price))
-
-        return self._cursor.fetchone()[1]
-
-    def has_been_price_changed(self, autoria_id, price):
+    def get_price_difference(self, autoria_id, price):
         self._cursor.execute('''
         SELECT 
-            price
+            price - ?
         FROM 
             cars
         WHERE 
             autoria_id = ? AND price != ?
-        ''', (autoria_id, price))
-        return
+        ''', (price, autoria_id, price))
+        return self._cursor.fetchone()
