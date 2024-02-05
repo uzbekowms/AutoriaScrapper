@@ -19,7 +19,7 @@ In this project, the main challenge was Telegram's limitation on the number of m
 Install the required dependencies using the following commands:
 
 ```bash
-pip install pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ## With Docker
