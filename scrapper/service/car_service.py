@@ -35,6 +35,7 @@ class CarService(metaclass=Singleton):
                     retries += 1
                 elif e.error_code == 403:
                     self._group_service.unsubscribe(chat_id)
+                    return
                 else:
                     raise
 
