@@ -21,7 +21,7 @@ def main():
         finally:
             end = time.perf_counter()
             time_difference = end - start
-            delay = (SCRAP_DELAY - time_difference) if time_difference > 0 else 0
+            delay = (SCRAP_DELAY - time_difference) if time_difference < SCRAP_DELAY else 0
             time.sleep(delay)
 
 
