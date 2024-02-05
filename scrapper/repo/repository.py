@@ -1,12 +1,12 @@
 import sqlite3
 
-from singleton import Singleton
+from scrapper.entity.singleton import Singleton
 
 
 class Repository(metaclass=Singleton):
 
     def __init__(self):
-        self._connection = sqlite3.connect('cars.db', check_same_thread=False)
+        self._connection = sqlite3.connect('../../cars.db', check_same_thread=False)
         self._connection.set_trace_callback(None)
         self._cursor = self._connection.cursor()
 

@@ -1,6 +1,6 @@
 import telebot
 from telebot.types import Message, InputMediaPhoto
-from group_service import GroupService
+from scrapper.service.group_service import GroupService
 import threading
 
 __BOT_TOKEN = '6861667224:AAGDsa3MPTppB71FWzMQ4EhmYSjE0r8GJ6g'

@@ -1,5 +1,5 @@
-from repository import GroupRepository
-from singleton import Singleton
+from scrapper.repo.repository import GroupRepository
+from scrapper.entity.singleton import Singleton
 
 
 class GroupService(metaclass=Singleton):

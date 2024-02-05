@@ -3,9 +3,9 @@ from typing import Optional
 import requests
 from bs4 import BeautifulSoup, Tag
 
-from car import Car, CarStatus
-from car_service import CarService
-from tag_classes import CAR_CARD_CLASS, CAR_INFO_CONTAINER, CAR_ID, PRICE_CLASS, PRICE_ATTR, CAR_ATTRIBUTES, CITY_CLASS, \
+from scrapper.entity.car import Car, CarStatus
+from scrapper.service.car_service import CarService
+from scrapper.tag_classes import CAR_CARD_CLASS, CAR_INFO_CONTAINER, CAR_ID, PRICE_CLASS, PRICE_ATTR, CAR_ATTRIBUTES, CITY_CLASS, \
     MILEAGE_CLASS, AUTORIA_LINK_ATTR, BIDFAX_PHOTO_CONTAINER, BIDFAX_PHOTO, PHOTOS_BLOCK, PHOTO_CLASS, BIDFAX_CONTAINER, \
     BIDFAX_LINK
 

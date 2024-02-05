@@ -1,5 +1,5 @@
-from car_service import CarService
-from parser import AutoriaScrapper
+from scrapper.service.car_service import CarService
+from scrapper.parser.parser import AutoriaScrapper
 from apscheduler.schedulers.background import BackgroundScheduler
 
 SCRAP_DELAY = 10

@@ -3,10 +3,10 @@ import time
 from telebot.apihelper import ApiTelegramException
 
 from group_service import GroupService
-from repository import CarRepository
-from singleton import Singleton
-from message_utils import car_to_message
-from autoria_scrapper_bot import send_car
+from scrapper.repo.repository import CarRepository
+from scrapper.entity.singleton import Singleton
+from scrapper.utils.message_utils import car_to_message
+from scrapper.bot.autoria_scrapper_bot import send_car
 
 
 class CarService(metaclass=Singleton):

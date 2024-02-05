@@ -1,5 +1,5 @@
 from telebot.types import InputMediaPhoto
-from car import Car, CarStatus
+from scrapper.entity.car import Car, CarStatus
 
 
 def car_to_message(car: Car) -> list[InputMediaPhoto]:
