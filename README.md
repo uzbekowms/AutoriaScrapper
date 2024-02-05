@@ -17,10 +17,10 @@ Install the required dependencies using the following commands:
 
 ```bash
 pip install pip install -r requirements.txt
-
+```
 
 ## With Docker
 ```bash
 docker build -t autoria-scrapper .
 docker run -it --rm -name scrapper autoria-scrapper
-
+```
