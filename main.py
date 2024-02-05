@@ -15,23 +15,14 @@ car_service = CarService()
 
 scheduler = BackgroundScheduler()
 
-i = 0
-
 
 def main():
-    global i
-    print(f'{i:=^100}')
     try:
         cars = autoria_parser.collect_unique_cars()
-        print('Parsed')
         car_service.save_all(cars)
-
         car_service.send_out_cars(cars)
-        print('Sended')
     except Exception as e:
         print(e)
-
-    i += 1
 
 
 if __name__ == '__main__':
