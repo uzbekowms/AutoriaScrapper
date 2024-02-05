@@ -1,7 +1,7 @@
 # Python Web Scraper for Cars
 
 ## Overview
-This project aims to build a simple web scraper using Python to extract car information from an autoria. The scraper will use BeautifulSoup for parsing HTML and requests for making HTTP requests.
+This project aims to build a simple web scraper using Python to extract car information from an autoria and send push notifications to telegram group. The scraper will use BeautifulSoup for parsing HTML and requests for making HTTP requests.
 
 ## Dependencies
 - Python 3.11
