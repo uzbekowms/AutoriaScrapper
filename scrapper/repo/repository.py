@@ -62,7 +62,7 @@ class CarRepository(Repository):
         self._cursor.execute("""
                CREATE TABLE IF NOT EXISTS cars(
                    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-                   autoria_id  INTEGER     NOT NULL,
+                   autoria_id  INTEGER     NOT NULL UNIQUE,
                    price       REAL    NOT NULL
                )""")
         self._connection.commit()
@@ -74,7 +74,7 @@ class CarRepository(Repository):
 
     def exists_by_id(self, id: str) -> bool:
         self._cursor.execute('''
-            SELECT EXISTS (SELECT id FROM cars WHERE id = ?)
+            SELECT EXISTS (SELECT autoria_id FROM cars WHERE autoria_id = ?)
         ''', (id,))
         return not not self._cursor.fetchone()[0]
 
