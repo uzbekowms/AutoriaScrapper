@@ -14,9 +14,6 @@ In this project, the main challenge was Telegram's limitation on the number of m
 - BeautifulSoup
 - requests
 - lxml
-- APScheduler
-
-I used the APScheduler library to schedule the parser to run every 10 minutes.
 
 ## Installation
 Install the required dependencies using the following commands:
