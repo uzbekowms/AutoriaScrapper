@@ -2,7 +2,7 @@ import time
 
 from telebot.apihelper import ApiTelegramException
 
-from group_service import GroupService
+from scrapper.service.group_service import GroupService
 from scrapper.repo.repository import CarRepository
 from scrapper.entity.singleton import Singleton
 from scrapper.utils.message_utils import car_to_message
@@ -22,7 +22,7 @@ class CarService(metaclass=Singleton):
     def save_all(self, cars):
         self._car_repository.save_all(cars)
 
-    def send_car_with_retry(self, chat_id, media, max_retries=5, delay_between_retries=40):
+    def send_car_with_retry(self, chat_id, media, max_retries=5, delay_between_retries=30):
         retries = 0
         while retries < max_retries:
             try:
