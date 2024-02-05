@@ -16,8 +16,8 @@ class CarService(metaclass=Singleton):
     def exists_by_autoria_id(self, autoria_id: str):
         return self._car_repository.exists_by_id(autoria_id)
 
-    def get_price_difference(self, autoria_id, price):
-        return self._car_repository.get_price_difference(autoria_id, price)
+    def get_price_by_id(self, autoria_id):
+        return self._car_repository.get_price_by_id(autoria_id)
 
     def save_all(self, cars):
         self._car_repository.save_all(cars)

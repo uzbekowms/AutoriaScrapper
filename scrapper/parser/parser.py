@@ -68,15 +68,15 @@ class AutoriaScrapper:
         car.new_price = float(car_card.find('div', class_=PRICE_CLASS)[PRICE_ATTR])
 
         if not self.__car_service.exists_by_autoria_id(car.autoria_id):
-            self.__parse_car_info(car, car_info, car_card)
             car.status = CarStatus.new
+            self.__parse_car_info(car, car_info, car_card)
             return car
 
-        car.old_price = self.__car_service.get_price_difference(car.autoria_id, car.new_price)
-
+        car.old_price = self.__car_service.get_price_by_id(car.autoria_id)
+        print(car.old_price)
         if car.old_price - car.new_price != 0:
-            self.__parse_car_info(car, car_info, car_card)
             car.status = CarStatus.price_changed
+            self.__parse_car_info(car, car_info, car_card)
             return car
 
     def __parse_car_info(self, car, car_info, car_card):

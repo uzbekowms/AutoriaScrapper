@@ -7,7 +7,7 @@ class Repository(metaclass=Singleton):
 
     def __init__(self):
         self._connection = sqlite3.connect('db/cars.db', check_same_thread=False)
-        self._connection.set_trace_callback(None)
+        self._connection.set_trace_callback(print)
         self._cursor = self._connection.cursor()
 
 
@@ -68,7 +68,7 @@ class CarRepository(Repository):
         self._connection.commit()
 
     def save_all(self, cars: list):
-        self._cursor.executemany('INSERT INTO cars(autoria_id, price) VALUES(?, ?)',
+        self._cursor.executemany('INSERT OR REPLACE INTO cars(autoria_id, price) VALUES(?, ?)',
                                  tuple(map(lambda car: [car.autoria_id, car.new_price], cars)))
         self._connection.commit()
 
@@ -78,13 +78,13 @@ class CarRepository(Repository):
         ''', (id,))
         return not not self._cursor.fetchone()[0]
 
-    def get_price_difference(self, autoria_id, price):
+    def get_price_by_id(self, autoria_id):
         self._cursor.execute('''
         SELECT 
-            price - ?
+            price
         FROM 
             cars
         WHERE 
             autoria_id = ?
-        ''', (price, autoria_id))
+        ''', (autoria_id,))
         return self._cursor.fetchone()[0]
