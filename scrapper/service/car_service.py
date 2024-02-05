@@ -33,6 +33,8 @@ class CarService(metaclass=Singleton):
                     print(f"Rate limit exceeded. Retrying after {delay_between_retries} seconds.")
                     time.sleep(delay_between_retries)
                     retries += 1
+                elif e.error_code == 403:
+                    self._group_service.unsubscribe(chat_id)
                 else:
                     raise
 
@@ -40,8 +42,7 @@ class CarService(metaclass=Singleton):
 
     def send_out_cars(self, cars):
         cars_messages = [car_to_message(car) for car in cars]
-        chat_ids = self._group_service.get_all_group_ids()
         for car_message in cars_messages:
-            for chat_id in chat_ids:
+            for chat_id in self._group_service.get_all_group_ids():
                 self.send_car_with_retry(chat_id, car_message)
                 time.sleep(1)
