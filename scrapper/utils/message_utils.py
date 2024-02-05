@@ -28,4 +28,4 @@ def get_car_status_text(car: Car):
             return "🆕 З'явилась нова машина!"
         case CarStatus.price_changed:
             price_difference = (car.new_price - car.old_price)
-            return f'📈 Ціна виросла на ${abs(price_difference):0,.2f}' if price_difference < 0 else f'📉 Ціна знизилась на ${price_difference:0,.2f}'
+            return f'📈 Ціна виросла на ${abs(price_difference):0,.2f}' if price_difference > 0 else f'📉 Ціна знизилась на ${price_difference * -1:0,.2f}'
