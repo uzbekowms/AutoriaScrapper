@@ -85,6 +85,6 @@ class CarRepository(Repository):
         FROM 
             cars
         WHERE 
-            autoria_id = ? AND price != ?
-        ''', (price, autoria_id, price))
-        return self._cursor.fetchone()
+            autoria_id = ?
+        ''', (price, autoria_id))
+        return self._cursor.fetchone()[0]
