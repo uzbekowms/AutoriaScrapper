@@ -4,7 +4,7 @@ WORKDIR ./app
 
 ADD . .
 
-VOLUME ./cars.db ./cars.db
+VOLUME ./db ./app/db
 
 RUN pip install -r requirements.txt
 
